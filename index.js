@@ -17,11 +17,17 @@ app.get('/api/boleto/accounts', async (req, res) => {
         'Content-Type': 'application/json'
       }
     });
+
+    if (!response.ok) {
+      const errText = await response.text();
+      throw new Error(`Erro ao buscar contas: ${response.status} - ${errText}`);
+    }
+
     const data = await response.json();
-    res.status(response.status).json(data);
+    res.status(200).json(data);
   } catch (error) {
     console.error('Erro ao consultar a BoletoCloud:', error);
-    res.status(500).json({ error: 'Erro ao consultar a BoletoCloud' });
+    res.status(500).json({ error: error.message });
   }
 });
 
@@ -36,6 +42,7 @@ app.get('/api/boleto/:id', async (req, res) => {
         'Content-Type': 'application/json'
       }
     });
+
     const data = await response.json();
     res.status(response.status).json(data);
   } catch (error) {
@@ -56,6 +63,7 @@ app.post('/api/boleto', async (req, res) => {
       },
       body: JSON.stringify(boletoData)
     });
+
     const data = await response.json();
     res.status(response.status).json(data);
   } catch (error) {
